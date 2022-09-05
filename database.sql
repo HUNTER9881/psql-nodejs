@@ -1,0 +1,16 @@
+CREATE TABLE houses(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    price NUMERIC(80) NOT NULL,
+    location VARCHAR(80) NOT NULL,
+    address VARCHAR(80) NOT NULL,
+    area VARCHAR(80) NOT NULL
+);
+
+
+CREATE TABLE users(
+    id BIGSERIAL NOT NULL PRIMARY KEY,
+    name VARCHAR(80) NOT NULL,
+    phone VARCHAR(80) NOT NULL,
+    email VARCHAR(80) NOT NULL,
+    isAdmin VARCHAR(80) NOT NULL
+);
