@@ -1,0 +1,211 @@
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Houses</h1>
+
+        <button class="btn btn-primary " type="button" data-bs-toggle="offcanvas" data-bs-target="#CREATE_CANVAS"
+            aria-controls="CREATE_CANVAS">
+            <i class="far fa-plus-square"></i>
+            Create
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-lg text-center">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Price</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Area</th>
+                    <th scope="col">Setting</th>
+                </tr>
+            </thead>
+            <tbody class="all_tables">
+
+                <tr>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+<div class="offcanvas offcanvas-end" style="width: 40%;" tabindex="-1" id="CREATE_CANVAS"
+    aria-labelledby="CREATE_CANVAS_LABEL">
+    <div class="offcanvas-header">
+        <h2 class="font-size-36 mt-3 p-2 ">Create house</h2>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <label class="mb-1">Price</label>
+        <input type="number" class="form-control" maxlength="40" id="price">
+
+        <label class="mb-1">Location</label>
+        <input type="text" class="form-control" maxlength="40" id="location">
+
+        <label class="mb-1">Address</label>
+        <select id="address" class="form-control">
+            <option value="">Tanlash</option>
+            <option value="Andijon">Andijon</option>
+            <option value="Namangan">Namangan</option>
+            <option value="Farg'ona">Farg'ona</option>
+            <option value="Toshkent">Toshkent</option>
+            <option value="Sirdaryo">Sirdaryo</option>
+            <option value="Jizzah">Jizzah</option>
+            <option value="Samarqand">Samarqand</option>
+            <option value="Buxoro">Buxoro</option>
+            <option value="Navoiy">Navoiy</option>
+            <option value="Qashqadaryo">Qashqadaryo</option>
+            <option value="Surxandaryo">Surxandaryo</option>
+            <option value="Xorazm">Xorazm</option>
+            <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+        </select>
+
+        <label class="mb-1">Area</label>
+        <input type="text" class="form-control" maxlength="40" id="area">
+
+        <button type="button" onclick="create()" class="btn btn-success waves-effect waves-light mt-2">Save</button>
+    </div>
+</div>
+
+
+<div class="offcanvas offcanvas-end" style="width: 40%;" tabindex="-1" id="UPDATE_CANVAS"
+    aria-labelledby="CREATE_CANVAS_LABEL">
+    <div class="offcanvas-header">
+        <h2 class="font-size-36 mt-3 p-2 ">Update house</h2>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body get_update">
+    </div>
+</div>
+
+
+
+<script src="/axios.min.js"></script>
+<script src="/jquery.min.js"></script>
+<script>
+
+    const elementID = (item) => {
+        return document.getElementById(item)
+    }
+
+
+    const restart = async () => {
+        axios.get("/api/houses/all").then(async (res) => {
+            const data = res.data.data;
+            const all_tables = $('.all_tables')
+            await all_tables.html("")
+            data.forEach((item) => {
+                all_tables.append(`
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.price}</td>
+                        <td>${item.location}</td>
+                        <td>${item.address}</td>
+                        <td>${item.area}</td>
+                        <td>
+                            <a  onclick="update('${item.id}')"   style="padding: 5px 9px; font-size: 16px;" data-bs-toggle="offcanvas" data-bs-target="#UPDATE_CANVAS" aria-controls="UPDATE_CANVAS"class="btn btn-warning" href="#">
+                                Edit
+                            </a>
+                            <a onclick="deleteData('${item.id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 16px;" >
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+    restart()
+
+    const create = () => {
+        const price = elementID("price").value
+        const location = elementID("location").value
+        const address = elementID("address").value
+        const area = elementID("area").value
+        if (price == "" || location == "" || address == "" || area == "") {
+            alert("Iltimos ma'lumotni kiriting")
+        }
+        else {
+            axios.post("/api/houses/create", {
+                price: parseInt(price),
+                location: location,
+                address: address,
+                area: area,
+            }).then((res) => {
+                restart()
+            })
+        }
+    }
+
+
+    const update = (id) => {
+        axios.get(`/api/houses/${id}`).then(async (res) => {
+            const data = res.data.data;
+            const get_update = $('.get_update')
+            await get_update.html("")
+            get_update.append(`
+                <label class="mb-1">Price</label>
+                <input type="number" value="${data.price}" class="form-control" id="price_update">
+
+                <label class="mb-1">Location</label>
+                <input type="text" value="${data.location}" class="form-control" id="location_update">
+
+                <label class="mb-1">Address</label>
+                <select id="address_update" class="form-control">
+                    <option value="">Tanlash</option>
+                    <option value="Andijon">Andijon</option>
+                    <option value="Namangan">Namangan</option>
+                    <option value="Farg'ona">Farg'ona</option>
+                    <option value="Toshkent">Toshkent</option>
+                    <option value="Sirdaryo">Sirdaryo</option>
+                    <option value="Jizzah">Jizzah</option>
+                    <option value="Samarqand">Samarqand</option>
+                    <option value="Buxoro">Buxoro</option>
+                    <option value="Navoiy">Navoiy</option>
+                    <option value="Qashqadaryo">Qashqadaryo</option>
+                    <option value="Surxandaryo">Surxandaryo</option>
+                    <option value="Xorazm">Xorazm</option>
+                    <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+                </select>
+
+                <label class="mb-1">Area</label>
+                <input type="text" value="${data.area}" class="form-control" id="area_update">
+
+                <button type="button" onclick="updateData('${data.id}')" class="btn btn-success waves-effect waves-light mt-2">Save</button>
+            `)
+        })
+    }
+
+    const updateData = (id) => {
+        const price = elementID("price_update").value;
+        const location = elementID("location_update").value;
+        const address = elementID("address_update").value;
+        const area = elementID("area_update").value;
+        if (price == "" || location == "" || address == "" || area == "") {
+            alert("Iltimos ma'lumotni kiriting")
+        }
+        else {
+            axios.put(`/api/houses/${id}`, {
+                price: parseInt(price),
+                location: location,
+                address: address,
+                area: area,
+            }).then((res) => {
+                restart()
+            })
+        }
+    }
+
+    const deleteData = (id) => {
+        axios.delete(`/api/houses/${id}`).then((res) => {
+            restart()
+        })
+    }
+
+
+</script>

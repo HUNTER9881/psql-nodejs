@@ -1,0 +1,147 @@
+<style>
+    .container {
+        margin: 2rem auto;
+        max-width: 50rem;
+        text-align: center;
+    }
+
+    form {
+        margin: 2.5rem auto;
+    }
+
+    .find-me.btn {
+        font-family: inherit;
+    }
+
+    .find-me.btn,
+    .not-on-https,
+    .no-geolocation-support,
+    .coordinates {
+        font-size: 1.5em;
+    }
+
+    .not-on-https,
+    .no-geolocation-support {
+        display: none;
+    }
+
+    .coordinates {
+        display: none;
+        margin-bottom: 2.5rem;
+    }
+
+    .visible {
+        display: block;
+    }
+
+    #map {
+        margin: 0 auto;
+        position: relative;
+    }
+
+    #map-canvas {
+        height: 25rem;
+        min-height: 25rem;
+        width: 100%;
+    }
+</style>
+
+<main>
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">This is house's details</h1>
+            </div>
+        </div>
+    </section>
+    <div class="album py-5 bg-light">
+        <div class="container row w-100">
+            <div class="all_tables col-md-12"> </div>
+            <div class=" col-md-12  mt-4">
+                <button class="btn btn-warning" onclick="getLocation()">What is my location?</button>
+                <div id="mapholder" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script src="/axios.min.js"></script>
+<script src="/jquery.min.js"></script>
+<script src="https://maps.google.com/maps/api/js"></script>
+<script>
+
+    const path = window.location.pathname;
+    const paramsId = path.slice(1)
+    console.log(paramsId)
+
+    axios.get(`/api/houses/${paramsId}`).then(async (res) => {
+        const data = res.data.data;
+        const all_tables = $('.all_tables')
+        await all_tables.html("")
+        all_tables.append(`
+            <div class="col " style="width: 100%;">
+                <div class="card shadow-lg">
+                    <image  src="/house.jpg"/>
+                    <div class="card-body">
+                        <p class="card-text">Price: ${data.price}</p>
+                        <p class="card-text">Address: ${data.address}</p>
+                        <p class="card-text">Address: ${data.location}</p>
+                        <p class="card-text">Address: ${data.area}</p>
+                       
+                    </div>
+                </div>
+            </div>
+        `)
+    })
+
+
+
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+            x.innerHTML = "Geolocation is not supported by this browser.";
+        }
+    }
+
+    function showPosition(position) {
+        lat = position.coords.latitude;
+        lon = position.coords.longitude;
+        latlon = new google.maps.LatLng(lat, lon)
+        mapholder = document.getElementById('mapholder')
+        mapholder.style.height = '250px';
+        mapholder.style.width = '500px';
+        // I added a border and margin to the map
+        mapholder.style.border = '2px solid orange';
+        mapholder.style.margin = '10px';
+
+        var myOptions = {
+            center: latlon, zoom: 14,
+            mapTypeId: google.maps.MapTypeId.ROADMAP,
+            mapTypeControl: false,
+            navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL }
+        }
+
+        var map = new google.maps.Map(document.getElementById("mapholder"), myOptions);
+        var marker = new google.maps.Marker({ position: latlon, map: map, title: "You are here!" });
+    }
+
+    function showError(error) {
+        switch (error.code) {
+            case error.PERMISSION_DENIED:
+                x.innerHTML = "User denied the request for Geolocation."
+                break;
+            case error.POSITION_UNAVAILABLE:
+                x.innerHTML = "Location information is unavailable."
+                break;
+            case error.TIMEOUT:
+                x.innerHTML = "The request to get user location timed out."
+                break;
+            case error.UNKNOWN_ERROR:
+                x.innerHTML = "An unknown error occurred."
+                break;
+        }
+    }
+</script>

@@ -1,0 +1,187 @@
+<main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+    <div
+        class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h1 class="h2">Users</h1>
+
+        <button class="btn btn-primary " type="button" data-bs-toggle="offcanvas" data-bs-target="#CREATE_CANVAS"
+            aria-controls="CREATE_CANVAS">
+            <i class="far fa-plus-square"></i>
+            Create
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-lg text-center">
+            <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">isAdmin</th>
+                    <th scope="col">Setting</th>
+                </tr>
+            </thead>
+            <tbody class="all_tables">
+
+                <tr>
+                    <td></td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+</main>
+
+
+<div class="offcanvas offcanvas-end" style="width: 40%;" tabindex="-1" id="CREATE_CANVAS"
+    aria-labelledby="CREATE_CANVAS_LABEL">
+    <div class="offcanvas-header">
+        <h2 class="font-size-36 mt-3 p-2 ">Create user</h2>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <label class="mb-1">Name</label>
+        <input type="text" class="form-control" id="name">
+
+        <label class="mb-1">Phone</label>
+        <input type="text" class="form-control" id="phone">
+
+        <label class="mb-1">Email</label>
+        <input type="text" class="form-control"  id="email">
+
+        <label class="mb-1">Role</label>
+        <select id="isAdmin" class="form-control">
+            <option value="">Tanlash</option>
+            <option value="admin">Admin</option>
+            <option value="moderator">Moderator</option>
+        </select>
+
+        <button type="button" onclick="create()" class="btn btn-success waves-effect waves-light mt-2">Save</button>
+    </div>
+</div>
+
+
+<div class="offcanvas offcanvas-end" style="width: 40%;" tabindex="-1" id="UPDATE_CANVAS"
+    aria-labelledby="CREATE_CANVAS_LABEL">
+    <div class="offcanvas-header">
+        <h2 class="font-size-36 mt-3 p-2 ">Update user</h2>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body get_update">
+    </div>
+</div>
+
+
+
+<script src="/axios.min.js"></script>
+<script src="/jquery.min.js"></script>
+<script>
+
+    const elementID = (item) => {
+        return document.getElementById(item)
+    }
+
+    const restart = async () => {
+        axios.get("/api/users/all").then(async (res) => {
+            const data = res.data.data;
+            const all_tables = $('.all_tables')
+            await all_tables.html("")
+            data.forEach((item) => {
+                all_tables.append(`
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.name}</td>
+                        <td>${item.phone}</td>
+                        <td>${item.email}</td>
+                        <td>${item.isadmin}</td>
+                        <td>
+                            <a  onclick="update('${item.id}')"   style="padding: 5px 9px; font-size: 16px;" data-bs-toggle="offcanvas" data-bs-target="#UPDATE_CANVAS" aria-controls="UPDATE_CANVAS"class="btn btn-warning" href="#">
+                                Edit
+                            </a>
+                            <a onclick="deleteData('${item.id}')" class="btn btn-danger" style="padding: 5px 10px; font-size: 16px;" >
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                `)
+            });
+        })
+    }
+    restart()
+
+    const create = () => {
+        const name = elementID("name").value
+        const phone = elementID("phone").value
+        const email = elementID("email").value
+        const isAdmin = elementID("isAdmin").value
+        if (name == "" || phone == "" || email == "" || isAdmin == "") {
+            alert("Iltimos ma'lumotni kiriting")
+        }
+        else {
+            axios.post("/api/users/create", {
+                name: name,
+                phone: phone,
+                email: email,
+                isAdmin: isAdmin,
+            }).then((res) => {
+                restart()
+            })
+        }
+    }
+
+
+    const update = (id) => {
+        axios.get(`/api/users/${id}`).then(async (res) => {
+            const data = res.data.data;
+            const get_update = $('.get_update')
+            await get_update.html("")
+            get_update.append(`
+                <label class="mb-1">Name</label>
+                <input type="text" value="${data.name}" class="form-control" id="name_update">
+
+                <label class="mb-1">Phone</label>
+                <input type="text" value="${data.phone}" class="form-control" id="phone_update">
+
+                <label class="mb-1">Email</label>
+                <input type="text" value="${data.email}" class="form-control" id="email_update">
+
+                <label class="mb-1">Role</label>
+                <select id="isAdmin_update"  class="form-control">
+                    <option value="">Tanlash</option>
+                    <option value="admin">Admin</option>
+                    <option value="moderator">Moderator</option>
+                </select>
+                <button type="button" onclick="updateData('${data.id}')" class="btn btn-success waves-effect waves-light mt-2">Save</button>
+            `)
+        })
+    }
+
+    const updateData = (id) => {
+        const name = elementID("name_update").value;
+        const phone = elementID("phone_update").value;
+        const email = elementID("email_update").value;
+        const isAdmin = elementID("isAdmin_update").value;
+        if (name == "" || phone == "" || email == "" || isAdmin == "") {
+            alert("Iltimos ma'lumotni kiriting")
+        }
+        else {
+            axios.put(`/api/users/${id}`, {
+                name: name,
+                phone: phone,
+                email: email,
+                isAdmin: isAdmin,
+            }).then((res) => {
+                restart()
+            })
+        }
+    }
+
+    const deleteData = (id) => {
+        axios.delete(`/api/users/${id}`).then((res) => {
+            restart()
+        })
+    }
+
+
+</script>

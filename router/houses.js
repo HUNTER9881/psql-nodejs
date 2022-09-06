@@ -4,6 +4,7 @@ const controller = require('../controller/houses')
 
 router.post('/create', controller.createData)
 router.get('/all', controller.getAll)
+router.get('/filter', controller.filterData)
 router.get('/:id', controller.getOne)
 router.put('/:id', controller.updateData)
 router.delete('/:id', controller.deleteData)

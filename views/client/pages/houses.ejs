@@ -1,0 +1,102 @@
+<main>
+
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">Welcome to our website</h1>
+                <select onchange="filtering(this.value)" class="form-control">
+                    <option value="">Filter by address</option>
+                    <option value="Andijon">Andijon</option>
+                    <option value="Namangan">Namangan</option>
+                    <option value="Farg'ona">Farg'ona</option>
+                    <option value="Toshkent">Toshkent</option>
+                    <option value="Sirdaryo">Sirdaryo</option>
+                    <option value="Jizzah">Jizzah</option>
+                    <option value="Samarqand">Samarqand</option>
+                    <option value="Buxoro">Buxoro</option>
+                    <option value="Navoiy">Navoiy</option>
+                    <option value="Qashqadaryo">Qashqadaryo</option>
+                    <option value="Surxandaryo">Surxandaryo</option>
+                    <option value="Xorazm">Xorazm</option>
+                    <option value="Qoraqalpog'iston">Qoraqalpog'iston</option>
+                </select>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 all_tables">
+            </div>
+
+            
+        </div>
+    </div>
+
+</main>
+
+
+<script src="/axios.min.js"></script>
+<script src="/jquery.min.js"></script>
+<script>
+
+    const restart = async () => {
+        axios.get("/api/houses/all").then(async (res) => {
+            const data = res.data.data;
+            const all_tables = $('.all_tables')
+            await all_tables.html("")
+            data.forEach((item) => {
+                all_tables.append(`
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <image src="/house.jpg"/>
+                            <div class="card-body">
+                                <p class="card-text">Price: ${item.price}</p>
+                                <p class="card-text">Address: ${item.address}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="/${item.id}" class="btn btn-sm btn-outline-success">See more</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            });
+        })
+    }
+    restart()
+
+
+
+    const filtering = (value) => {
+        axios.get('/api/houses/filter', { params: { address: value } }).then(async (res) => {
+            const data = res.data.data
+            console.log(data)
+            const all_tables = $('.all_tables')
+            await all_tables.html("")
+            data.forEach((item) => {
+                all_tables.append(`
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <image src="/house.jpg"/>
+                            <div class="card-body">
+                                <p class="card-text">Price: ${item.price}</p>
+                                <p class="card-text">Address: ${item.address}</p>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="btn-group">
+                                        <a href="/${item.id}" class="btn btn-sm btn-outline-success">See more</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `)
+            });
+        })
+    }
+
+
+
+
+</script>

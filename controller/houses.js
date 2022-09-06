@@ -19,6 +19,20 @@ exports.createData = async (req, res, next) => {
 }
 
 
+// @description: FIlter by address
+// @method: GET
+// @api: /api/houses/filter
+exports.filterData = async (req, res, next) => {
+    try {
+        const { address } = req.query;
+        const result = await pool.query(`SELECT * FROM houses WHERE address='${address}' `)
+        res.status(200).json({ success: true, data: result.rows })
+    }
+    catch (error) {
+        res.status(400).json({ success: false, data: error.message })
+    }
+}
+
 // @description: Get all datas
 // @method: GET
 // @api: /api/houses/all
@@ -39,7 +53,7 @@ exports.getOne = async (req, res, next) => {
     try {
         const { id } = req.params;
         const result = await pool.query("SELECT * FROM houses WHERE id = $1", [id])
-        res.status(200).json({ success: true, data: result.rows })
+        res.status(200).json({ success: true, data: result.rows[0] })
     }
     catch (error) {
         res.status(400).json({ success: false, data: error.message })
@@ -91,3 +105,4 @@ exports.deleteData = async (req, res, next) => {
         res.status(400).json({ success: false, data: error.message })
     }
 }
+

@@ -39,7 +39,7 @@ exports.getOne = async (req, res, next) => {
     try {
         const { id } = req.params;
         const result = await pool.query("SELECT * FROM users WHERE id = $1", [id])
-        res.status(200).json({ success: true, data: result.rows })
+        res.status(200).json({ success: true, data: result.rows[0] })
     }
     catch (error) {
         res.status(400).json({ success: false, data: error.message })
