@@ -1,4 +1,4 @@
-CREATE TABLE houses(
+CREATE TABLE Houses(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     price NUMERIC(80) NOT NULL,
     location VARCHAR(80) NOT NULL,
@@ -7,10 +7,11 @@ CREATE TABLE houses(
 );
 
 
-CREATE TABLE users(
+CREATE TABLE Users(
     id BIGSERIAL NOT NULL PRIMARY KEY,
     name VARCHAR(80) NOT NULL,
     phone VARCHAR(80) NOT NULL,
     email VARCHAR(80) NOT NULL,
     isAdmin VARCHAR(80) NOT NULL
 );
+
