@@ -3,6 +3,7 @@ const app = express()
 const path = require('path')
 const expressEjsLayouts = require('express-ejs-layouts')
 
+
 // Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }))
