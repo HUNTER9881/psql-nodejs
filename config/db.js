@@ -4,6 +4,6 @@ const poll = new Pool({
     password:  "1585743d",
     database: "ecom",
     host:  "localhost",
-    port: "5432"
+    port: 5432
 })
 module.exports = poll
